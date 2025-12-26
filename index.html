@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Cipher Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      padding: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 300px;
+      background: #161b22;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      font-family: monospace;
+    }
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 16px;
+    }
+    pre {
+      background: #161b22;
+      padding: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+</head>
+<body>
+
+<h2>Python Encryption Tool</h2>
+
+<button onclick="runPython()">Run Program</button>
+
+<pre id="output">Loading Python…</pre>
+
+<script>
+let pyodideReady = false;
+let pyodide;
+
+async function initPyodide() {
+  pyodide = await loadPyodide();
+  pyodideReady = true;
+  document.getElementById("output").textContent = "Ready. Press Run Program.";
+}
+
+async function runPython() {
+  if (!pyodideReady) return;
+
+  const pythonCode = `
+import random
+letter = "a"
+dletter = "a"
+lc1 = []
+dlc1 = []
+dllc1 = []
+fr = 1
+dfr = 1
+dlc2 = []
+dllc2 = []
+
+def caesar_encrypt(offset, emessage, fc, eint):
+    lc1 = []
+    random.seed(offset + 11)
+    for c in emessage:
+        letter = ord(c)
+        letter += int(letter)
+        letter += random.randrange(1, 10000)
+        letter += random.randrange(0, 9999)
+        letter += 20000
+        if eint == 0:
+            lc1.append(chr(int(letter)))
+        elif eint == 1:
+            lc1.append(str(letter))
+        emessage = ("".join(lc1))
+    if fc == 1:
+        print(emessage)
+    return emessage
+
+def caesar_decrypt(doffset, dmessage, dfc, dint):
+    dlc1 = []
+    random.seed(doffset + 11)
+    for c in dmessage:
+        dletter = ord(c)
+        dletter -= 20000
+        dletter -= random.randrange(0, 9999)
+        dletter -= random.randrange(1, 10000)
+        dletter -= 1 / 2 * int(dletter)
+        dlc1.append(chr(int(dletter)))
+        dmessage = ("".join(dlc1))
+    if dfc == 1:
+        print(dmessage)
+    return (dmessage)
+
+def code_expansion(ecode, length, x=10, newcode=int(703518)):
+    random.seed(ecode)
+    length -= 2
+    for i in range(length):
+        x = x * 10
+    newcode = random.randrange(x, x * 10)
+    return (newcode)
+
+def grabcode(gcode, start, end, gfc):
+    gcode = str(gcode)
+    if gfc == 1:
+        print(int(gcode[start:end]))
+    return int(gcode[start:end])
+
+def bitchange(bcode, bmessage, bfc, newdigit = int(1) ):
+    dlc2 = []
+    random.seed(bcode)
+    for c in str(bmessage):
+        newdigit = int(c)
+        newdigit += random.randrange(0,9)
+        if newdigit > 9:
+            newdigit -= 10
+        dlc2.append(str(newdigit))
+    newdigit = str(("".join(dlc2)))
+    if bfc == 1:
+        print(newdigit)
+    return newdigit
+
+def debitchange(dbcode, dbmessage, dbfc, dnewdigit = int(1) ):
+    dllc2 = []
+    random.seed(dbcode)
+    for c in str(dbmessage):
+        dnewdigit = int(c)
+        dnewdigit -= random.randrange(0,9)
+        if dnewdigit < 0:
+            dnewdigit += 10
+        dllc2.append(str(dnewdigit))
+    dnewdigit = str(("".join(dllc2)))
+    if dbfc ==1:
+        print(dnewdigit)
+    return dnewdigit
+
+choose = int(input("Encrypt(1) or decrypt(2): "))
+univcode = int(input("Enter code, ( the encryption level is a set value and doesn't depend on the code): "))
+encstandard = int(input("Enter encryption standard level (4-n): "))
+step = int(input("Enter encryption step (2-n): "))
+cipmessage = str(input("Message: "))
+univcode = code_expansion(univcode, encstandard)
+
+# rest runs normally
+`;
+
+  try {
+    await pyodide.runPythonAsync(pythonCode);
+  } catch (err) {
+    document.getElementById("output").textContent = err;
+  }
+}
+
+initPyodide();
+</script>
+
+</body>
+</html>
