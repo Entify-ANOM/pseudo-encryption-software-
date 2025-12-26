@@ -121,4 +121,56 @@ def code_expansion(ecode, length, x=10, newcode=int(703518)):
 
 def grabcode(gcode, start, end, gfc):
     gcode = str(gcode)
-    if gfc == 1
+    if gfc == 1:
+        print(int(gcode[start:end]))
+    return int(gcode[start:end])
+
+def bitchange(bcode, bmessage, bfc, newdigit = int(1) ):
+    dlc2 = []
+    random.seed(bcode)
+    for c in str(bmessage):
+        newdigit = int(c)
+        newdigit += random.randrange(0,9)
+        if newdigit > 9:
+            newdigit -= 10
+        dlc2.append(str(newdigit))
+    newdigit = str(("".join(dlc2)))
+    if bfc == 1:
+        print(newdigit)
+    return newdigit
+
+def debitchange(dbcode, dbmessage, dbfc, dnewdigit = int(1) ):
+    dllc2 = []
+    random.seed(dbcode)
+    for c in str(dbmessage):
+        dnewdigit = int(c)
+        dnewdigit -= random.randrange(0,9)
+        if dnewdigit < 0:
+            dnewdigit += 10
+        dllc2.append(str(dnewdigit))
+    dnewdigit = str(("".join(dllc2)))
+    if dbfc ==1:
+        print(dnewdigit)
+    return dnewdigit
+
+choose = int(input("Encrypt(1) or decrypt(2): "))
+univcode = int(input("Enter code: "))
+encstandard = int(input("Enter encryption standard level: "))
+step = int(input("Enter encryption step: "))
+cipmessage = str(input("Message: "))
+
+univcode = code_expansion(univcode, encstandard)
+
+print("Program executed.")
+`;
+
+  try {
+    pyodide.runPython(pythonCode);
+    document.getElementById("out").textContent = "Done. Check output above.";
+  } catch (e) {
+    document.getElementById("out").textContent = e;
+  }
+}
+</script>
+</body>
+</html>
