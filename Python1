@@ -1,0 +1,166 @@
+import random
+letter = "a"
+dletter = "a"
+lc1 = []
+dlc1 = []
+dllc1 = []
+fr = 1
+dfr = 1
+dlc2 = []
+dllc2 = []
+
+
+def caesar_encrypt(offset, emessage, fc, eint):
+    lc1 = []
+    random.seed(offset + 11)
+    for c in emessage:
+        letter = ord(c)
+        letter += int(letter)
+        letter += random.randrange(1, 10000)
+        letter += random.randrange(0, 9999)
+        letter += 20000
+        if eint == 0:
+            lc1.append(chr(int(letter)))
+        elif eint == 1:
+            lc1.append(str(letter))
+        emessage = ("".join(lc1))
+    if fc == 1:
+        print(emessage)
+    return emessage
+
+
+def caesar_decrypt(doffset, dmessage, dfc, dint):
+    dlc1 = []
+    random.seed(doffset + 11)
+    for c in dmessage:
+        dletter = ord(c)
+        dletter -= 20000
+        dletter -= random.randrange(0, 9999)
+        dletter -= random.randrange(1, 10000)
+        dletter -= 1 / 2 * int(dletter)
+        dlc1.append(chr(int(dletter)))
+        dmessage = ("".join(dlc1))
+    if dfc == 1:
+        print(dmessage)
+    return (dmessage)
+
+
+def code_expansion(ecode, length, x=10, newcode=int(703518)):
+    random.seed(ecode)
+    length -= 2
+    for i in range(length):
+        x = x * 10
+    newcode = random.randrange(x, x * 10)
+    return (newcode)
+
+
+def grabcode(gcode, start, end, gfc):
+    gcode = str(gcode)
+    if gfc == 1:
+        print(int(gcode[start:end]))
+    return int(gcode[start:end])
+
+def bitchange(bcode, bmessage, bfc, newdigit = int(1) ):
+    dlc2 = []
+    random.seed(bcode)
+    for c in str(bmessage):
+        newdigit = int(c)
+        newdigit += random.randrange(0,9)
+        if newdigit > 9:
+            newdigit -= 10
+        dlc2.append(str(newdigit))
+    newdigit = str(("".join(dlc2)))
+    if bfc == 1:
+        print(newdigit)
+    return newdigit
+
+def debitchange(dbcode, dbmessage, dbfc, dnewdigit = int(1) ):
+    dllc2 = []
+    random.seed(dbcode)
+    for c in str(dbmessage):
+        dnewdigit = int(c)
+        dnewdigit -= random.randrange(0,9)
+        if dnewdigit < 0:
+            dnewdigit += 10
+        dllc2.append(str(dnewdigit))
+    dnewdigit = str(("".join(dllc2)))
+    if dbfc ==1:
+        print(dnewdigit)
+    return dnewdigit
+
+
+
+choose = int(input("Encrypt(1) or decrypt(2): "))
+univcode = int(input("Enter code, ( the encryption level is a set value and doesn't depend on the code): "))
+encstandard = int(input("Enter encryption standard level (4-n): "))
+step = int(input("Enter encryption step (2-n): "))
+cipmessage = str(input("Message: "))
+univcode = code_expansion(univcode, encstandard)
+if choose == 1:
+    nth = 0-int(step)
+    nth = int(nth)
+    while encstandard > 0:
+        mtl = []
+        encstandard -= 2*step
+        nth += int(step)
+        cipmessage = caesar_encrypt(grabcode(univcode, nth, int(nth+step), 0), cipmessage, 0, 1)
+        nth += step
+        cipmessage = bitchange(grabcode(univcode, nth, int(nth+step), 0), cipmessage, 0)
+        mth = 0
+        mtl = []
+        mcv = 0
+        for c in cipmessage:
+            mcv += 1
+        while (mth + 2) < mcv:
+            if grabcode(cipmessage, mth, mth+2, 0) > 32:
+                mtl.append(str(chr(int(grabcode(cipmessage, mth, mth+2, 0)))))
+            elif grabcode(cipmessage, mth, mth+2, 0) < 33:
+                mtl.append(str(chr(int(grabcode(cipmessage, mth, mth+2, 0)+1000))))
+
+            mth += 2
+        if mcv - mth == 1:
+            mtl.append(str(chr(int(grabcode(cipmessage, mth, mcv, 0) + 2000))))
+        elif mcv - mth > 1:
+            mtl.append(str(chr(int(grabcode(cipmessage, mth, mcv, 0)))))
+        cipmessage = str(("".join(mtl)))
+    print(cipmessage)
+    print("copychar")
+
+
+if choose == 2:
+    countt = 0
+    ctcut = 0
+    cipcharacter = 1
+    nth = encstandard
+    nth += step
+    while encstandard > 0:
+        nth -= step
+        mtl = []
+        encstandard -= 2*step
+        for c in str(cipmessage):
+            cipcharacter = ord(c)
+            if int(cipcharacter) > 1999:
+                cipcharacter = int(cipcharacter)
+                cipcharacter -= 2000
+            if cipcharacter > 900:
+                cipcharacter -= 1000
+                if cipcharacter < 10:
+                    cipcharacter = str(cipcharacter)
+                    cipcharacter = str("0"+ cipcharacter)
+            mtl.append(str(cipcharacter))
+        cipmessage = (str(("".join(mtl))))
+        mtl = []
+        cipmessage = debitchange(grabcode(univcode, nth - step, nth, 0), cipmessage, 0)
+        nth -= step
+        for c in cipmessage:
+            countt +=1
+        ctcut = -5
+        countt = countt*1/5
+        while countt > 0:
+            countt -= 1
+            ctcut += 5
+            mtl.append(str(chr(int(grabcode(cipmessage, ctcut, ctcut+5, 0)))))
+        cipmessage = str(("".join(mtl)))
+        cipmessage = caesar_decrypt( grabcode(univcode, nth - step, nth, 0), cipmessage, 0, 1)
+
+    print(cipmessage)
