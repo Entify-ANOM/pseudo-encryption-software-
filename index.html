@@ -1,63 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Python Cipher Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      font-family: monospace;
-      background: #0d1117;
-      color: #c9d1d9;
-      padding: 10px;
-    }
-    textarea {
-      width: 100%;
-      height: 300px;
-      background: #161b22;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      font-family: monospace;
-    }
-    button {
-      padding: 10px;
-      margin-top: 10px;
-      width: 100%;
-      font-size: 16px;
-    }
-    pre {
-      background: #161b22;
-      padding: 10px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-  </style>
-
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Encryption Tool</title>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<style>
+body {
+  background:#0d1117;
+  color:#c9d1d9;
+  font-family: monospace;
+  padding:10px;
+}
+input, button {
+  width:100%;
+  margin:5px 0;
+  padding:8px;
+  font-size:16px;
+}
+pre {
+  background:#161b22;
+  padding:10px;
+  white-space:pre-wrap;
+}
+</style>
 </head>
+
 <body>
+<h3>Python Encryption Tool</h3>
 
-<h2>Python Encryption Tool</h2>
+<input id="choose" placeholder="Encrypt(1) or Decrypt(2)">
+<input id="code" placeholder="Universal Code">
+<input id="level" placeholder="Encryption Standard Level">
+<input id="step" placeholder="Encryption Step">
+<input id="message" placeholder="Message">
 
-<button onclick="runPython()">Run Program</button>
+<button onclick="run()">Run</button>
 
-<pre id="output">Loading Python…</pre>
+<pre id="out">Loading Python…</pre>
 
 <script>
 let pyodideReady = false;
 let pyodide;
 
-async function initPyodide() {
+async function init() {
   pyodide = await loadPyodide();
   pyodideReady = true;
-  document.getElementById("output").textContent = "Ready. Press Run Program.";
+  document.getElementById("out").textContent = "Ready.";
 }
+init();
 
-async function runPython() {
+async function run() {
   if (!pyodideReady) return;
 
+  const inputs = [
+    document.getElementById("choose").value,
+    document.getElementById("code").value,
+    document.getElementById("level").value,
+    document.getElementById("step").value,
+    document.getElementById("message").value
+  ];
+
   const pythonCode = `
+USER_INPUTS = ${JSON.stringify(inputs)}
+
+_inputs = iter(USER_INPUTS)
+input = lambda _: next(_inputs)
+
 import random
 letter = "a"
 dletter = "a"
@@ -112,57 +121,4 @@ def code_expansion(ecode, length, x=10, newcode=int(703518)):
 
 def grabcode(gcode, start, end, gfc):
     gcode = str(gcode)
-    if gfc == 1:
-        print(int(gcode[start:end]))
-    return int(gcode[start:end])
-
-def bitchange(bcode, bmessage, bfc, newdigit = int(1) ):
-    dlc2 = []
-    random.seed(bcode)
-    for c in str(bmessage):
-        newdigit = int(c)
-        newdigit += random.randrange(0,9)
-        if newdigit > 9:
-            newdigit -= 10
-        dlc2.append(str(newdigit))
-    newdigit = str(("".join(dlc2)))
-    if bfc == 1:
-        print(newdigit)
-    return newdigit
-
-def debitchange(dbcode, dbmessage, dbfc, dnewdigit = int(1) ):
-    dllc2 = []
-    random.seed(dbcode)
-    for c in str(dbmessage):
-        dnewdigit = int(c)
-        dnewdigit -= random.randrange(0,9)
-        if dnewdigit < 0:
-            dnewdigit += 10
-        dllc2.append(str(dnewdigit))
-    dnewdigit = str(("".join(dllc2)))
-    if dbfc ==1:
-        print(dnewdigit)
-    return dnewdigit
-
-choose = int(input("Encrypt(1) or decrypt(2): "))
-univcode = int(input("Enter code, ( the encryption level is a set value and doesn't depend on the code): "))
-encstandard = int(input("Enter encryption standard level (4-n): "))
-step = int(input("Enter encryption step (2-n): "))
-cipmessage = str(input("Message: "))
-univcode = code_expansion(univcode, encstandard)
-
-# rest runs normally
-`;
-
-  try {
-    await pyodide.runPythonAsync(pythonCode);
-  } catch (err) {
-    document.getElementById("output").textContent = err;
-  }
-}
-
-initPyodide();
-</script>
-
-</body>
-</html>
+    if gfc == 1
